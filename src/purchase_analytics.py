@@ -34,14 +34,35 @@ def extract_products(products):
     return [products_id,department_id]
 
 
+#Use this function to check the if the product_id in products.csv are in sequence.
+def check_products(products_id):
+    a = products_id[1:]
+    temp = 0
+    count = 0
+    flag = 0
+    for i in range(len(a)-1):
+        temp = int(a[i+1])-int(a[i])
+        count += temp
+    flag = count == int(a[len(a)-1])-1
+    return flag
+
+
 #Use this function to get department_id for each ordered product
 def get_department_id(product_id,products_id,department_id):
+    flag = check_products(products_id)
     dep_product_id = ['department product']
-    for i in range(1, len(product_id)):
-        if products_id[int(product_id[i])] == product_id[i]:
-            dep_product_id.append(department_id[int(product_id[i])])
-        else:
-            Print("This method doesn't apply to this dataset")
+    if flag == 1:
+        for i in range(1, len(product_id)):
+            if products_id[int(product_id[i])] == product_id[i]:
+                dep_product_id.append(department_id[int(product_id[i])])
+            else:
+                print("Error")
+    else:
+        for row in product_id[1:]:
+            for index,row_product in enumerate(products_id):
+                if row in row_product:
+                    dep_product_id.append(department_id[index])
+
     return dep_product_id
 
 
@@ -92,7 +113,7 @@ def calculate_percentage(department_num_orders):
     department_num_orders[3]= map(lambda x,y:x/y,department_num_orders[2],department_num_orders[1])
     department_num_orders[3] = list(department_num_orders[3])
     for i in range(len(department_num_orders[3])):
-        department_num_orders[3][i] = round(department_num_orders[3][i],2)
+        department_num_orders[3][i] = '%.2f' % department_num_orders[3][i]
     return department_num_orders
 
 
@@ -105,11 +126,20 @@ def sort_department(department_num_orders):
     zipped.sort()
     return zipped
 
+#Get our report.csv
+def get_report(final_dataset):
+    header = ['department_id','number_of_orders','number_of_first_orders','percentage']
+    out = open('./output/report.csv','a', newline='')
+    csv_write = csv.writer(out,dialect='excel')
+    csv_write.writerow(header)
+    for i in range(len(final_dataset)):
+        csv_write.writerow(final_dataset[i])
+
 #Main function
 def main():
     #Read csv files
-    order_products = read_files('order_products__prior.csv')
-    products = read_files('products.csv')
+    order_products = read_files('./input/order_products.csv')
+    products = read_files('./input/products.csv')
 
     #Extract columns
     order_id, product_id, cart_order, reordered = extract_order_products(order_products)
@@ -125,8 +155,10 @@ def main():
 
     #Sort the results by department id
     department_final = sort_department(department_num_orders)
-    print(department_final)
+
+    #Get_report
+    get_report(department_final)
+
 
 if __name__ == "__main__":
     main()
-
