@@ -51,12 +51,14 @@ def check_products(products_id):
 def get_department_id(product_id,products_id,department_id):
     flag = check_products(products_id)
     dep_product_id = ['department product']
+    #If the products_ids are documented in sequence, we can use a much faster approach.
     if flag == 1:
         for i in range(1, len(product_id)):
             if products_id[int(product_id[i])] == product_id[i]:
                 dep_product_id.append(department_id[int(product_id[i])])
             else:
                 print("Error")
+    #If not, we have to search for each ordered product's department.
     else:
         for row in product_id[1:]:
             for index,row_product in enumerate(products_id):
@@ -67,7 +69,7 @@ def get_department_id(product_id,products_id,department_id):
 
 
 
-# Count the number of times a product was request from each department
+# Count the number of times a product was request for each department
 # And the number of times a product was requested for the first time
 def count_number_of_orders(dep_product_id, product_id, reordered):
     w, h = 0, 4;
@@ -78,8 +80,15 @@ def count_number_of_orders(dep_product_id, product_id, reordered):
     product_id = product_id[1:]
     reordered = reordered[1:]
 
+
+    #department_num_orders[0] saves get_department_id
+    #department_num_orders[1] saves the number of times a product was request
+    #department_num_orders[2] saves the number of times a product was requested for the first time
+    #department_num_orders[3] is used to save the percentage
     for index, row in enumerate(tmp):
         if row not in department_num_orders[0]:
+            #record department_id and set the number of orders to 1 for this department
+            #because this is the first ordered product in this department in our record
             department_num_orders[0].append(row)
             department_num_orders[1].append(1)
             #Use variable product_id_marker to record if a product has been requested before.
@@ -89,6 +98,7 @@ def count_number_of_orders(dep_product_id, product_id, reordered):
             if reordered[index] == '1':
                 department_num_orders[2].append(0)
             else:
+                #Check whether the product is ordered before
                 if product_id[index] not in product_id[:index]:
                     department_num_orders[2].append(1)
                 else:
@@ -98,12 +108,17 @@ def count_number_of_orders(dep_product_id, product_id, reordered):
         else:
             for index_dep, row_dep in enumerate(department_num_orders[0]):
                 if row_dep == row:
+                    #count the number of times a product was request
                     department_num_orders[1][index_dep] += 1
                     if reordered[index] == '1':
                         pass
+                    #if reordered flag is not equal to 1
                     else:
+                        #Check whether the product is ordered before
                         if product_id[index] not in product_id_marker:
+                            #count the number of times a product was requested for the first time
                             department_num_orders[2][index_dep] += 1
+            #Record this product has been ordered
             product_id_marker.add(product_id[index])
     return department_num_orders
 
