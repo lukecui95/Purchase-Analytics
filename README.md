@@ -24,9 +24,11 @@ If the product_ids are not documented in sequence, we have to search each produc
 
 Use the function **count_number_of_orders** to achieve this goal and save the result in a two-dimension list.
 
-The function will go through each row in the list product_id(each row in order_product.csv) and count the number of orders in each department.
+The function will go through each row in the list product_id, that is, each row in order_product.csv, and count the number of orders in each department.
 
-For the number of times a product was requested for the first time, the function will first check whether the reordered flag is 1 or not. If it's 1, then the product is definitely not ordered for the fisrt time. If not, we will check if the product_id is in the previous ordered product_ids. If still not, we will add one for this department. Moreover, we use **set** to record if a product is ordered before, since it's much faster to search in sets than lists.
+For the number of times a product was requested for the first time, the function will first check whether the reordered flag is 1 or not. If it's 1, then the product is definitely not ordered for the fisrt time. If not, we will check if the product_id is in the previous ordered product_ids. If still not, we will add one for this department. 
+
+Moreover, we use **set** to record if a product is ordered before, since it's much faster to search in sets than lists.
 
 ### Calculate the percentage, sort the result by department_id and get our report.csv
 
